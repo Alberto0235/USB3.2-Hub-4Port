@@ -1,1 +1,181 @@
-# USB3.2-Hub-4Port
+# ⚡ USB 3.2 Gen 1 — 4-Port Hub
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Hardware-Complete-brightgreen?style=for-the-badge&logo=altiumdesigner&logoColor=white"/>
+  <img src="https://img.shields.io/badge/PCB-6--Layer-blue?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Altium_Designer-26-A5915F?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/USB-3.2_Gen1_5Gbps-0078D7?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Hub_IC-TUSB8044A-C75000?style=for-the-badge"/>
+</p>
+
+---
+
+## 📋 Project Summary
+
+This repository contains the complete hardware design for a USB 3.2 Gen 1 (5 Gbps)
+4-port hub, designed as a portfolio project demonstrating high-speed PCB design
+methodology on a real-world USB system.
+
+The hub is fully bus-powered over USB-C (UFP, up to 3A) and provides one USB-C
+downstream port with cold-socket compliance via discrete P-MOSFET logic, plus three
+USB-A downstream ports — all with per-port current limiting. No MCU is required:
+Type-C attach detection, power sequencing, and overcurrent protection are handled
+entirely in hardware.
+
+The design focuses on:
+
+- **Impedance-controlled SuperSpeed routing** (90Ω differential, 6-layer stackup)
+- **USB-C cold socket implementation** using P-MOSFET gate logic
+  (no VBUS before cable insertion, per USB Type-C specification)
+- **Hierarchical schematic** with multi-part component decomposition
+  (TUSB8044A split across 5 sub-sheets)
+- **Power delivery chain** with PG-chained sequencing and RC-delayed reset
+
+> **Status:** Hardware design complete. Awaiting prototype manufacturing
+> (PCBWay sponsorship in progress). Board has not yet been assembled or tested.
+
+---
+
+![PCB 3D Top](Hardware/Exports/PCB_3D_Top.png)
+
+🔗 **Schematic (PDF):** [View full schematic](Hardware/Exports/Schematic_USB_Hub_v1.0.pdf)
+
+---
+
+## 🔧 Key Specifications
+
+| Parameter | Value |
+|---|---|
+| **Hub Controller** | TUSB8044A — USB 3.2 Gen 1, 5 Gbps, 64-pin VQFN |
+| **Upstream Port** | USB-C (UFP/Sink, bus-powered, 5V/3A max) |
+| **Downstream Ports** | 1× USB-C (DFP) + 3× USB-A |
+| **Type-C Controllers** | 2× HD3SS3220IRNHT (UFP + DFP, GPIO mode) |
+| **Power Switches** | 2× TPS2561QDRCRQ1 (dual-channel, per-port current limiting) |
+| **Power Tree** | 5V → 3.3V: TLV62569PDDCT (buck, 2A) → 1.1V: TPS74801RGWRM3 (LDO, 1.5A) |
+| **Battery Charging** | BC 1.2 CDP enabled on all downstream ports |
+| **Cold Socket** | Hardware P-MOSFET (DMG2305UX) on USB-C downstream port |
+| **PCB Layers** | 6-layer controlled-impedance (PCBWay regular stackup #1) |
+| **Board Size** | 100 × 50 mm |
+| **Design Tool** | Altium Designer 26 |
+
+---
+
+## 🏆 Hardware Engineering Highlights
+
+### ⚡ SuperSpeed Signal Integrity
+
+- All SS differential pairs routed on **L1 and L6 only**, each with an adjacent
+  solid GND plane (L2 and L5) as the impedance reference.
+- **Differential impedance: 90Ω ±10%**, calculated with Altium's built-in
+  field solver on the PCBWay 6-layer stackup.
+- Prepreg L1–L2 and L5–L6: **2116, 0.12mm, Dk = 4.45**
+  → trace width 0.136mm / gap 0.127mm.
+- **5W clearance rule (0.6mm)** enforced between SS pairs and all other
+  signals and copper pours.
+- **Intra-pair skew ≤ 0.15mm** (≈ 1.2 ps) on all SuperSpeed pairs.
+- AC coupling caps (100nF, 0402, X7R) on TX paths only,
+  placed within 5mm of connectors.
+- **Polarity inversion** applied where needed: both TUSB8044A
+  (section 11.1.3) and HD3SS3220 support it natively — no via
+  swaps required.
+
+| Impedance Profile | Stackup |
+|:---:|:---:|
+| ![Impedance](Docs/Impedance/USB_SS_90ohm_Differential.png) | ![Stackup](Docs/Impedance/Stackup_PCBWay_1_6mm_6L.png) |
+
+### 🧱 6-Layer Stackup
+
+| Layer | Type | Function |
+|---|---|---|
+| L1 | Signal | USB SS/HS pairs, components |
+| L2 | GND Plane | Solid reference — no splits |
+| L3 | Signal | Slow signals only (I2C, PWRCTL, OVERCUR) |
+| L4 | Power | Polygon pours: 5V / 3.3V / 1.1V |
+| L5 | GND Plane | Solid reference — no splits |
+| L6 | Signal | USB SS/HS overflow, routing |
+
+L3 is sandwiched between L2 (GND) and L4 (Power) — all non-critical signals
+are confined here, completely shielded from the high-speed layers.
+
+### 🔌 USB-C Cold Socket
+
+Per USB Type-C specification, the downstream USB-C port VBUS must be
+de-energized when no cable is inserted. This is implemented with a single
+P-MOSFET (DMG2305UX, SOT-23) acting as a hardware AND gate:
+
+- **Source** → PWRCTL1 from TUSB8044A (3.3V when hub active)
+- **Gate** → ID pin of HD3SS3220 DFP (pulled LOW on cable attach)
+- **Drain** → EN1 of TPS2561 power switch
+
+When no cable is present, the ID pin floats and the 100kΩ Gate-Source
+resistor keeps the MOSFET off — VBUS stays at 0V.
+On cable insertion, HD3SS3220 detects the Rd termination on CC and
+pulls ID LOW, turning on the MOSFET and enabling VBUS.
+USB-A ports use direct PWRCTL→EN connections (hot socket, per spec).
+
+### 🔋 Power Sequencing
+
+### 🛡️ ESD Protection
+
+| Location | Component | Protection |
+|---|---|---|
+| SS lines (all ports) | PUSB3FR4Z (Nexperia) | ±15kV, 0.29pF |
+| USB 2.0 + CC lines | TPD4E05U06 (TI) | 0.5pF, IEC 61000-4-2 |
+| VBUS (all ports) | SMAJ5.0A | TVS, clamps surges |
+
+---
+
+## 📁 Repository Structure
+
+USB3.2-Hub-4Port/
+│
+├── Hardware/
+│   ├── Altium/
+│   │   ├── USB3_2_Hub_4Port.PrjPcb
+│   │   ├── USB3_2_Hub_4Port.PcbDoc
+│   │   └── *.SchDoc (tutti i fogli)
+│   └── Exports/
+│       ├── Schematic_USB_Hub_v1.0.pdf
+│       ├── PCB_3D_Top.png
+│       ├── PCB_3D_Bottom.png
+│       └── PCB_Layout_Overview.png
+│
+├── Fabrication/
+│   ├── Gerbers/
+│   │   └── USB3_2_Hub_4Port_Gerbers.zip
+│   ├── BOM_USB_Hub_v1.0.csv
+│   ├── Assembly_PickPlace.csv
+│   └── Stackup_PCBWay.png
+│
+├── Docs/
+│   ├── Impedance/
+│   │   ├── USB_SS_90ohm_Differential.png
+│   │   └── Stackup_PCBWay_1_6mm_6L.png
+│   └── Design_Notes/
+│       └── Power_Budget.md
+│
+└── README.md
+
+---
+
+## 🛠️ Tools Used
+
+| Tool | Version | Purpose |
+|---|---|---|
+| **Altium Designer** | 26 | Schematic capture, 6-layer PCB layout |
+
+---
+
+## ⚠️ Disclaimer
+
+This project is provided for educational and portfolio purposes.
+The board has not yet been manufactured or tested.
+The author assumes no liability for any issues arising from
+the use of this material.
+
+---
+
+## 👤 Author
+
+**Alberto Marrone**
+[LinkedIn](your-linkedin-url)
