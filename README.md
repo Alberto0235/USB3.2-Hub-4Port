@@ -158,7 +158,7 @@ USB3.2-Hub-4Port/
 
 | Tool | Version | Purpose |
 |---|---|---|
-| **Altium Designer** | 26.6.0 | Schematic capture, 6-layer PCB layout |
+| **Altium Designer** | 26.7.1 | Schematic capture, 6-layer PCB layout |
 
 ---
 
