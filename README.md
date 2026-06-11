@@ -104,30 +104,45 @@ When no cable is present, the ID pin floats and the 100kΩ Gate-Source resistor 
 ```text
 USB3.2-Hub-4Port/
 │
+│
+├── Images/
+│   ├── PCB_3D_Top.png
+│   ├── PCB_3D_Bottom.png
+│   ├── PCB_Layout.png
+│   ├── Stackup.png
+│   └── Schematic_Overview.png
+│
 ├── Hardware/
 │   ├── Altium/
-│   │   ├── USB3_2_Hub_4Port.PrjPcb
-│   │   ├── USB3_2_Hub_4Port.PcbDoc
-│   │   └── *.SchDoc (tutti i fogli)
+│   │   ├── USB3.2_Hub_4Port.PrjPcb
+│   │   ├── USB3.2_Hub_4Port.PcbDoc
+│   │   ├── Top_Level.SchDoc
+│   │   ├── Hub_Core.SchDoc
+│   │   ├── Power.SchDoc
+│   │   ├── Upstream.SchDoc
+│   │   ├── Downstream_Port_1.SchDoc
+│   │   ├── Downstream_Port_2.SchDoc
+│   │   └── USB3.2_Hub_4Port.PrjPcbVariants
+│   │
 │   └── Exports/
 │       ├── Schematic_USB_Hub_v1.0.pdf
-│       ├── PCB_3D_Top.png
-│       ├── PCB_3D_Bottom.png
-│       └── PCB_Layout_Overview.png
+│       └── Draftsman_USB_Hub_v1.0.pdf
 │
-├── Fabrication/
+├── Manufacturing/
 │   ├── Gerbers/
-│   │   └── USB3_2_Hub_4Port_Gerbers.zip
-│   ├── BOM_USB_Hub_v1.0.csv
-│   ├── Assembly_PickPlace.csv
-│   └── Stackup_PCBWay.png
+│   │   └── USB3.2_Hub_4Port_RevA.zip
+│   │
+│   ├── Assembly/
+│   │   ├── BOM.xlsx
+│   │   └── PickPlace.csv
+│   │
+│   └── Stackup/
+│       └── PCBWay_6Layer_Stackup.pdf
 │
 ├── Docs/
-│   ├── Impedance/
-│   │   ├── USB_SS_90ohm_Differential.png
-│   │   └── Stackup_PCBWay_1_6mm_6L.png
-│   └── Design_Notes/
-│       └── Power_Budget.md
+│   ├── Design_Notes.md
+│   ├── Routing_Guidelines.md
+│   └── Bringup.md
 │
 └── README.md
 ```
