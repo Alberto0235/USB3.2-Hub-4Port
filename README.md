@@ -25,7 +25,7 @@ The design focuses on:
 
 ---
 
-![PCB 3D Top](Hardware/Exports/PCB_3D_Top.png)
+![PCB 3D Top](Images/PCB_3D.png)
 
 🔗 **Schematic (PDF):** [View full schematic](Hardware/Exports/Schematic_USB_Hub_v1.0.pdf)
 
