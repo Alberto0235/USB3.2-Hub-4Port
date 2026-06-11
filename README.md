@@ -121,7 +121,10 @@ USB3.2-Hub-4Port/
 │   │   ├── Upstream.SchDoc
 │   │   ├── Downstream_Port_1.SchDoc
 │   │   ├── Downstream_Port_2.SchDoc
-│   │   └── USB3.2_Hub_4Port.PrjPcbVariants
+│   │   ├── Downstream_Port_3-4.SchDoc
+│   │   ├── USB3.2_Hub_4Port.BomDoc
+│   │   ├── USB3.2_Hub_4Port.PrjPcbVariants
+│   │   └── USB3.2_Hub_4Port.PrjPcbStructure
 │   │
 │   └── Exports/
 │       ├── Schematic_USB_Hub_v1.0.pdf
