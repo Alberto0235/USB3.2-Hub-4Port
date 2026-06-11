@@ -1,4 +1,4 @@
-# ⚡ USB 3.2 Gen 1 - 4-Port Hub
+# ⚡ USB 3.2 Gen 1 — 4-Port Hub
 
 <p align="left">
   <img src="https://img.shields.io/badge/Hardware-Complete-brightgreen?style=for-the-badge&logo=altiumdesigner&logoColor=white"/>
