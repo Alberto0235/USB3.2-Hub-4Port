@@ -104,7 +104,6 @@ When no cable is present, the ID pin floats and the 100kΩ Gate-Source resistor 
 ```text
 USB3.2-Hub-4Port/
 │
-│
 ├── Images/
 │   ├── PCB_3D_Top.png
 │   ├── PCB_3D_Bottom.png
