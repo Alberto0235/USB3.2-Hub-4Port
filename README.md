@@ -132,7 +132,7 @@ USB3.2-Hub-4Port/
 │
 ├── Manufacturing/
 │   ├── Gerbers/
-│   │   └── USB3.2_Hub_4Port_RevA.zip
+│   │   └── Gerber_USB3.2_Hub_4Port_v1.0.zip
 │   │
 │   ├── Assembly/
 │   │   ├── BOM.xlsx
