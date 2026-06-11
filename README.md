@@ -105,10 +105,12 @@ When no cable is present, the ID pin floats and the 100kΩ Gate-Source resistor 
 USB3.2-Hub-4Port/
 │
 ├── Images/
+│   ├── PCB_3D.png
 │   ├── PCB_3D_Top.png
 │   ├── PCB_3D_Bottom.png
-│   ├── PCB_Layout.png
+│   ├── Layerstack_Visualizer.png
 │   ├── Stackup.png
+│   ├── D90_Impedance_Profile.png
 │   └── Schematic_Overview.png
 │
 ├── Hardware/
@@ -139,7 +141,8 @@ USB3.2-Hub-4Port/
 │   │   └── PickPlace.csv
 │   │
 │   └── Stackup/
-│       └── PCBWay_6Layer_Stackup.pdf
+│       ├── PCBWay_6Layer_Stackup.pdf
+│       └── USB3.2_Hub_4Port_Stackup.png
 │
 ├── Docs/
 │   ├── Design_Notes.md
