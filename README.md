@@ -284,7 +284,7 @@ solid GND plane (L2 and L5) with no splits. Routing follows the 5W rule
 > tricks or register configuration required.
 
 <p align="center">
-  <img src="Docs/Impedance/D90_Impedance_Profile.png" width="600"/>
+  <img src="Images/D90_Impedance_Profile.png" width="600"/>
 </p>
 
 <p align="center"><i>90Ω differential impedance profile — Altium field solver, 2116 prepreg, Dk = 4.45</i></p>
