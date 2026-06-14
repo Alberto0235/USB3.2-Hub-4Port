@@ -17,8 +17,6 @@ High-Speed Hardware Design
   <img src="Images/PCBWay_Logo.png" width="220">
 </p>
 
-<p align="center"><i>Prototype Manufacturing Partner</i></p>
-
 <p align="center">
   <img src="Images/PCB_3D.png" width="850">
 </p>
@@ -110,10 +108,6 @@ solver converges to **90.03Ω** — a 0.04% deviation from target.
 > Both the TUSB8044A and HD3SS3220 support **native polarity inversion** on
 > SuperSpeed pairs — P/N can be swapped freely during routing with no via
 > tricks or register configuration required.
-
-> [!NOTE]
-> Routing close-ups of the SS pairs and TUSB8044A QFN breakout will be added
-> here once the assembled board arrives.
 
 ---
 
