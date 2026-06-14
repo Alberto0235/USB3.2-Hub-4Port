@@ -8,9 +8,7 @@ High-Speed Hardware Design
 
 <p align="center">
   <img src="https://img.shields.io/badge/USB-3.2_Gen1_5Gbps-0078D7?style=for-the-badge&logo=usb&logoColor=white"/>
-  <img src="https://img.shields.io/badge/PCB-6_Layer_Controlled_Impedance-2D2D2D?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/PCB-6_Layer-4B5563?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Controlled_Impedance-90Ω_Differential-0F766E?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/TI-TUSB8044A-C75000?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/Altium_Designer-26-A5915F?style=for-the-badge"/>
 </p>
