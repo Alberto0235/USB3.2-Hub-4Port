@@ -182,75 +182,100 @@ This project is provided for educational and portfolio purposes. The board has n
 
 
 
+<p align="center">
+  <img src="Images/PCB_3D.png" width="850">
+</p>
 
-# ⚡ USB 3.2 Gen 1 — 4-Port Hub
+<h1 align="center">⚡ USB 3.2 Gen 1 — 4-Port Hub</h1>
 
-<p align="left">
+<p align="center">
+High-Speed Hardware Design Portfolio Project
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/USB-3.2_Gen1_5Gbps-0078D7?style=for-the-badge&logo=usb&logoColor=white"/>
-  <img src="https://img.shields.io/badge/PCB-6--Layer_Controlled_Impedance-2D2D2D?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Hub_Controller-TUSB8044A-C75000?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/PCB-6_Layer_Controlled_Impedance-2D2D2D?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/TI-TUSB8044A-C75000?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/Altium_Designer-26-A5915F?style=for-the-badge"/>
 </p>
 
 <p align="center">
-  <img src="Images/PCB_3D.png" width="700"/>
+  <img src="Images/PCBWay_Logo.png" width="220">
 </p>
+
+<p align="center"><i>Prototype Manufacturing Partner</i></p>
 
 ---
 
-## 📋 Project Overview
+## 🎯 Project Goal
 
-This project is a fully bus-powered USB 3.2 Gen 1 (5 Gbps) hub built around
-the Texas Instruments **TUSB8044A** hub controller.
+This project started as a question: could I take a real, commercially
+relevant USB 3.x system — not a blinking-LED board — from architecture all
+the way through to a manufacturable, impedance-controlled 6-layer PCB?
 
-The goal was to design and lay out a real-world high-speed digital system
-end-to-end — from controller and topology selection, through
-impedance-controlled routing, to manufacturing — covering:
+The hub is built around the Texas Instruments **TUSB8044A**, fully
+bus-powered over USB-C, with one USB-C downstream port (cold-socket
+compliant) and three USB-A ports, each with independent current limiting.
+Every piece of control logic — Type-C attach detection, power-up sequencing,
+overcurrent handling — runs entirely in hardware, with no microcontroller.
 
-- USB 3.2 SuperSpeed signal routing with controlled differential impedance
-- USB-C upstream and downstream ports with **hardware-only Type-C logic** (no MCU)
-- Multi-rail power delivery with sequenced enable timing
-- 6-layer PCB stackup selection and the signal integrity tradeoffs behind it
+The areas I specifically wanted to get right:
 
-It was developed as a personal hardware engineering project to gain hands-on
-experience with high-speed routing, power sequencing, ESD protection, and
-design-for-manufacturing on a board complex enough to require real
-engineering tradeoffs.
+- Routing 5 Gbps SuperSpeed differential pairs with real impedance control,
+  not just "default" trace widths
+- Understanding *why* a 6-layer stackup matters for SI, not just using one
+  because it's common
+- Implementing USB-C cold socket behavior correctly, in hardware, per spec
+- Getting power-up sequencing timing right against the TUSB8044A's
+  datasheet requirements
+- Producing a design that a contract manufacturer could actually build —
+  and finding out where my assumptions were wrong during DFM review
 
-> [!NOTE]
-> **Hardware Revision:** Rev A · **Status:** Manufacturing & Assembly (PCBWay)
-> · **Validation:** Pending — results and assembled board photos will be
-> added once the boards arrive.
+---
+
+## 🚀 Project Status
+
+- [x] Architecture & component selection
+- [x] Schematic capture (hierarchical, multi-sheet)
+- [x] Signal integrity analysis & stackup design
+- [x] PCB layout & routing
+- [x] Manufacturing files (Gerbers, BOM, Pick & Place)
+- [x] DFM review (PCBWay)
+- [ ] PCB fabrication & assembly
+- [ ] Bring-up & validation
+- [ ] Release v1.0 — with photos & test results
 
 ---
 
 ## 🧩 Board Features
 
-- USB 3.2 Gen 1 (5 Gbps) — 4 downstream ports: 1× USB-C (DFP) + 3× USB-A
-- Fully bus-powered over USB-C upstream (UFP, 5V/3A max), no external supply
-- Entirely hardware-driven Type-C attach detection — **no MCU**
-- USB-C cold-socket VBUS gating per Type-C specification
-- Per-port current limiting with overcurrent protection
-- BC1.2 (CDP) battery charging support on all downstream ports
-- 6-layer impedance-controlled PCB — 90Ω differential SS/HS pairs
-- ESD protection on all USB data lines, CC lines, and VBUS
+| Feature | Description |
+|---|---|
+| ⚡ USB 3.2 Gen 1 | 5 Gbps SuperSpeed, 4-port hub (TUSB8044A) |
+| 🔌 USB-C UFP | Bus-powered upstream, 5V/3A max |
+| 🧊 Cold Socket | Hardware VBUS gating on USB-C downstream port |
+| 🔋 BC1.2 CDP | Charging support on all downstream ports |
+| 🛡️ ESD Protection | All USB data lines, CC lines, and VBUS protected |
+| 📡 Controlled Impedance | 90Ω differential SS/HS routing, 6-layer stackup |
+| 🔄 Power Sequencing | Hardware-controlled, RC-delayed reset |
+| 🧠 No MCU | All Type-C and power logic implemented in hardware |
 
 ---
 
-## 🏆 Design Challenges
+## 🏆 Engineering Highlights
 
 ### 📡 Signal Integrity — 90Ω Differential Impedance
 
 All SuperSpeed and High-Speed differential pairs are routed exclusively on
 **L1 and L6**, each directly referenced to a solid, unbroken GND plane (L2
 and L5). Routing follows the 5W rule — a minimum of 0.6mm clearance between
-any differential pair and other signals or copper pour, to keep nearby
-copper from acting as a parasitic coplanar ground and shifting the
-impedance off target.
+any differential pair and other signals or copper pour, preventing nearby
+copper from acting as a parasitic coplanar ground and shifting the impedance
+off target.
 
 | Parameter | SuperSpeed (USB 3.x) | High-Speed (USB 2.0) |
 |---|---|---|
-| Target differential impedance | 90Ω ±10% | 90Ω ±10% |
+| Target differential impedance | 90Ω ±10% | 90Ω ±15% |
 | Trace width / gap | 0.136mm / 0.127mm | per Altium field solver |
 | Intra-pair skew | ≤ 0.15mm (≈1.2ps) | ≤ 3.8mm |
 | Max via count per pair | 2 | 4 |
@@ -267,6 +292,10 @@ solver converges to **90.03Ω** — a 0.04% deviation from target.
 > Both the TUSB8044A and HD3SS3220 support **native polarity inversion** on
 > SuperSpeed pairs — P/N can be swapped freely during routing with no via
 > tricks or register configuration required.
+
+> [!NOTE]
+> Routing close-ups of the SS pairs and TUSB8044A QFN breakout will be added
+> here once the assembled board arrives.
 
 ---
 
@@ -286,11 +315,6 @@ against a solid GND plane — there is no plane split for an SS pair to cross
 on either outer layer. Slow control signals are confined to L3, sandwiched
 between a GND plane (L2) and the power plane (L4), shielding them from both
 the high-speed layers and external noise.
-
-<p align="center">
-  <img src="Images/Stackup.png" width="450"/>
-  <img src="Images/Layerstack_Visualizer.png" width="450"/>
-</p>
 
 > [!NOTE]
 > The prepreg between L1–L2 and L5–L6 uses **2116 weave** instead of the
@@ -327,31 +351,44 @@ hot-socket behavior is permitted there.
 > The TUSB8044A requires GRSTz to remain asserted for ≥3ms after both VDD
 > (1.1V) and VDD33 (3.3V) enter their recommended operating range.
 
-t = 0ms      VBUS 5V applied
-t ≈ 0.5ms    Buck PG releases → LDO EN
-t ≈ 3.8ms    LDO soft-start complete (Css = 2.2nF, tSS ≈ 3.3ms)
-t ≈ 4.3ms    LDO PG releases → RC delay begins
-t ≈ 16ms     GRSTz reaches VIH → TUSB8044A exits reset
+| Event | Time |
+|---|---|
+| VBUS 5V applied | 0 ms |
+| Buck PG asserted → LDO enabled | ≈ 0.5 ms |
+| LDO soft-start complete (Css = 2.2nF, tSS ≈ 3.3ms) | ≈ 3.8 ms |
+| LDO PG released → RC delay begins | ≈ 4.3 ms |
+| GRSTz reaches V_IH → TUSB8044A exits reset | ≈ 16 ms |
 
 The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz
 (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor,
-R_eq ≈ 12.66kΩ gives t(VIH) ≈ 11.8ms — comfortably above the 3ms minimum,
+R_eq ≈ 12.66kΩ gives t(V_IH) ≈ 11.8ms — comfortably above the 3ms minimum,
 with margin against the internal pull-up's full tolerance range.
 
 ---
 
 ## 🖼️ Design Gallery
 
+### PCB Render
+
 <p align="center">
   <img src="Images/PCB_3D_Top.png" width="380"/>
   <img src="Images/PCB_3D_Bottom.png" width="380"/>
 </p>
+
+### Schematic Architecture
 
 <p align="center">
   <img src="Images/Schematic_Overview.png" width="780"/>
 </p>
 
 🔗 **Full schematic (PDF, all sheets):** [Schematic_USB_Hub_v1.0.pdf](Hardware/Exports/Schematic_USB_Hub_v1.0.pdf)
+
+### Stackup Development
+
+<p align="center">
+  <img src="Images/Stackup.png" width="380"/>
+  <img src="Images/Layerstack_Visualizer.png" width="380"/>
+</p>
 
 ---
 
@@ -370,34 +407,25 @@ with margin against the internal pull-up's full tolerance range.
 | **ESD Protection** | PUSB3FR4Z (SS), TPD4E05U06 (USB2.0/CC), SMAJ5.0A (VBUS) |
 | **PCB Layers** | 6-layer, impedance-controlled |
 | **Board Size** | 100 × 50 mm |
-| **Design Tool** | Altium Designer 26 |
 
 ---
 
-## 📦 Manufacturing — PCBWay
+## 🤝 Manufacturing Partner
 
-<p align="left">
-  <img src="https://img.shields.io/badge/Manufactured_by-PCBWay-FF6600?style=for-the-badge"/>
-</p>
+This prototype is being manufactured and assembled by **PCBWay**.
 
-This prototype is being manufactured and assembled through a collaboration
-with **PCBWay**. During the design review, their engineering team identified
-a via-in-pad condition before production — caught and corrected ahead of
-fabrication for this 6-layer impedance-controlled run.
+During the engineering review process, the PCBWay team provided valuable DFM
+feedback and identified a via-in-pad issue before fabrication. The issue was
+corrected before production, avoiding a potentially costly prototype
+revision on a 6-layer impedance-controlled run.
 
-Throughout the review process, communication was responsive and detailed,
-particularly around impedance-controlled routing requirements, assembly
-manufacturability, and stackup verification against the design files below.
+The project is currently in manufacturing and will be updated with:
 
-<p align="center">
-  <img src="Manufacturing/Stackup/USB3.2_Hub_4Port_Stackup.png" width="600"/>
-</p>
-
-📄 **Manufacturer stackup reference:** [PCBWay_6Layer_Stackup.pdf](Manufacturing/Stackup/PCBWay_6Layer_Stackup.pdf)
-
-> [!NOTE]
-> Once the assembled boards arrive and bring-up is complete, this section
-> will be updated with photos and an objective assessment of build quality.
+- Assembly quality inspection
+- PCB quality assessment
+- Bring-up results
+- High-resolution board photography
+- Functional validation
 
 ---
 
@@ -416,6 +444,22 @@ performed — full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
 
 ---
 
+## 📚 Lessons Learned
+
+- First 6-layer controlled-impedance design — translating an impedance
+  target into trace width/gap via a field solver, not a rule of thumb
+- USB Type-C cold socket requirements, and implementing them with discrete
+  hardware instead of an MCU
+- GRSTz timing constraints and the importance of accounting for an IC's
+  *internal* pull-up tolerance, not just the external RC values
+- A real DFM review workflow with a contract manufacturer — including a
+  via-in-pad catch that would have caused issues at assembly
+
+> [!NOTE]
+> More to come after bring-up and validation.
+
+---
+
 ## ⬇️ Downloads
 
 | File | Description |
@@ -425,6 +469,7 @@ performed — full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
 | [Gerbers](Manufacturing/Gerbers/Gerber_USB3.2_Hub_4Port_v1.0.zip) | Production-ready Gerber + drill files |
 | [BOM](Manufacturing/Assembly/BOM.xlsx) | Bill of materials |
 | [Pick & Place](Manufacturing/Assembly/PickPlace.csv) | Assembly placement file |
+| [PCBWay Stackup Reference (PDF)](Manufacturing/Stackup/PCBWay_6Layer_Stackup.pdf) | Manufacturer-verified stackup |
 
 ---
 
@@ -440,7 +485,8 @@ USB3.2-Hub-4Port/
 │   ├── Layerstack_Visualizer.png
 │   ├── Stackup.png
 │   ├── D90_Impedance_Profile.png
-│   └── Schematic_Overview.png
+│   ├── Schematic_Overview.png
+│   └── PCBWay_Logo.png
 │
 ├── Hardware/
 │   ├── Altium/
