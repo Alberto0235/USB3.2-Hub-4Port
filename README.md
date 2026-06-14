@@ -63,20 +63,6 @@ The areas I specifically wanted to get right:
 - [ ] Bring-up & validation
 - [ ] Release v1.0 — with photos & test results
 
-## 🚀 Project Status
-
-| Stage | Status |
-|---------|---------|
-| Architecture & Component Selection | ✅ Complete |
-| Schematic Design | ✅ Complete |
-| Stackup & Signal Integrity | ✅ Complete |
-| PCB Layout & Routing | ✅ Complete |
-| Manufacturing Package | ✅ Complete |
-| DFM Review | ✅ Complete |
-| PCB Fabrication | 🟡 In Progress |
-| Assembly | 🟡 In Progress |
-| Bring-up & Validation | 🔲 Pending |
-
 ---
 
 ## 🧩 Board Features
@@ -218,7 +204,6 @@ with margin against the internal pull-up's full tolerance range.
 ### Stackup Development
 
 <p align="center">
-  <img src="Images/Stackup.png" width="380"/>
   <img src="Images/Layerstack_Visualizer.png" width="380"/>
 </p>
 
@@ -243,6 +228,10 @@ with margin against the internal pull-up's full tolerance range.
 ---
 
 ## 🤝 Manufacturing Partner
+
+<p align="center">
+  <img src="Images/PCBWay_Logo.png" width="180">
+</p>
 
 This prototype is being manufactured and assembled by **PCBWay**.
 
@@ -361,10 +350,18 @@ USB3.2-Hub-4Port/
 
 ---
 
+## 📄 License
+
+Released under the MIT License.
+
+You are welcome to study, modify, manufacture, and build upon this design.
+
+---
+
 ## 👤 Author
 
 **Alberto Marrone**
 MSc Student, Electronics Engineering — Politecnico di Milano
-[LinkedIn](your-linkedin-url) · [GitHub](https://github.com/Alberto0235)
+[LinkedIn](your-linkedin-url)
 
 *This project is provided for educational and portfolio purposes.*
