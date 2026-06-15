@@ -14,10 +14,6 @@ High-Speed Hardware Design
 </p>
 
 <p align="center">
-  <img src="Images/PCBWay_Logo.png" width="220">
-</p>
-
-<p align="center">
   <img src="Images/PCB_3D.png" width="850">
 </p>
 
@@ -196,11 +192,7 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 
 ## 🤝 Manufacturing Partner
 
-This prototype is being manufactured and assembled by &nbsp;<img src="Images/PCBWay_Logo.png" height="22" valign="middle">
-
-Manufacturing and assembly for this prototype are being provided by <img src="Images/PCBWay_Logo.png" height="18">.
-
-Manufacturing and assembly for this prototype are being provided by <img src="Images/PCBWay_Logo.png" height="22" style="vertical-align: middle;">
+Manufacturing and assembly for this prototype are being provided by <img src="Images/PCBWay_Logo.png" height="20">.
 
 During the engineering review process, the PCBWay team provided valuable DFM feedback and identified a via-in-pad issue before fabrication. The issue was corrected before production, avoiding a potentially costly prototype revision on a 6-layer impedance-controlled run.
 
