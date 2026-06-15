@@ -200,6 +200,8 @@ This prototype is being manufactured and assembled by &nbsp;<img src="Images/PCB
 
 Manufacturing and assembly for this prototype are being provided by <img src="Images/PCBWay_Logo.png" height="18">.
 
+Manufacturing and assembly for this prototype are being provided by <img src="Images/PCBWay_Logo.png" height="22" style="vertical-align: middle;">
+
 During the engineering review process, the PCBWay team provided valuable DFM feedback and identified a via-in-pad issue before fabrication. The issue was corrected before production, avoiding a potentially costly prototype revision on a 6-layer impedance-controlled run.
 
 The project is currently in manufacturing and will be updated.
