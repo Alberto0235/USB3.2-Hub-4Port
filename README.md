@@ -121,6 +121,28 @@ With no cable inserted, the ID pin floats and a 100kΩ gate-source resistor hold
 
 ---
 
+### 🔋 Power Budget
+
+The hub negotiates 3A from the upstream USB-C port. Hub control circuitry and always-on rails consume a portion of this budget, leaving the remainder for the four downstream ports.
+
+| Item | Current |
+|---|---|
+| Upstream budget (USB-C UFP, 3A negotiated) | 3000 mA |
+| Hub controller + support circuitry | ≈ 582 mA |
+| Available for downstream ports | ≈ 2418 mA |
+| Ports 1–2 limit (TPS2561 #1, R_ILIM = 37.4kΩ) | 1.5 A each |
+| Ports 3–4 limit (TPS2561 #2, R_ILIM = 56kΩ) | 1.0 A each |
+| Sum of all port limits (worst case, all ports active) | 5.0 A |
+
+> [!NOTE]
+> The sum of individual port limits (5A) exceeds the available downstream
+> budget (2.418A). This is an accepted worst-case scenario: simultaneous
+> maximum draw on all four ports is unlikely in practice, and the upstream
+> host's own port protection provides a final safeguard if the negotiated
+> 3A is exceeded.
+
+---
+
 ### 🔋 Power Delivery Sequencing
 
 > [!IMPORTANT]
@@ -135,7 +157,7 @@ With no cable inserted, the ID pin floats and a 100kΩ gate-source resistor hold
 | LDO PG released → RC delay begins | ≈ 4.3 ms |
 | GRSTz reaches V_IH → TUSB8044A exits reset | ≈ 16 ms |
 
-The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor, R_eq ≈ 12.66kΩ gives t(V_IH) ≈ 11.8ms, comfortably above the 3ms minimum, with margin against the internal pull-up's full tolerance range.
+The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor, R_eq ≈ 12.66kΩ. The time delay is comfortably above the 3ms minimum required after both supplies are stable.
 
 ---
 
@@ -186,6 +208,7 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 ## 🤝 Manufacturing Partner
 
 Manufacturing and assembly for this prototype are being provided by <img src="Images/PCBWay_Logo.png" height="20">.
+Manufacturing and assembly for this prototype are being provided by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" align="middle"></a>.
 
 During the engineering review process, the PCBWay team provided valuable DFM feedback and identified a via-in-pad issue before fabrication. The issue was corrected before production, avoiding a potentially costly prototype revision on a 6-layer impedance-controlled run.
 
@@ -278,7 +301,6 @@ USB3.2-Hub-4Port/
 │
 ├── Docs/
 │   ├── Design_Decisions.md
-│   ├── Routing_Guidelines.md
 │   └── Bringup.md
 │
 └── README.md
