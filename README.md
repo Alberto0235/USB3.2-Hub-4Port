@@ -248,7 +248,7 @@ Once the assembled boards arrive, the following bring-up sequence will be perfor
 | [Gerbers](Manufacturing/Gerbers/Gerber_USB3.2_Hub_4Port_v1.0.zip) | Production-ready Gerber + drill files |
 | [BOM](Manufacturing/Assembly/BOM.xlsx) | Bill of materials |
 | [Pick & Place](Manufacturing/Assembly/PickPlace.csv) | Assembly placement file |
-| [PCBWay Stackup Reference (PDF)](Manufacturing/Stackup/PCBWay_6Layer_Stackup.pdf) | Manufacturer-verified stackup |
+| [PCBWay Stackup Reference (PDF)](Manufacturing/Stackup/PCBWay_6Layer_Stackup.pdf) | Manufacturer stackup |
 
 ---
 
