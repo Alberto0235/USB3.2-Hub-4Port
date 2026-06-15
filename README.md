@@ -218,7 +218,7 @@ performed — full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
 - [ ] GRSTz timing verification (oscilloscope)
 - [ ] USB enumeration (VID/PID check)
 - [ ] Per-port functional test (USB 2.0 and USB 3.2 devices)
-- [ ] Overcurrent / fault LED test per port
+- [ ] Overcurrent / fault test per port
 - [ ] BC1.2 charging detection test
 
 ---
