@@ -31,7 +31,6 @@ The areas I specifically wanted to get right:
 - Understanding the 6-layer stackup advantages
 - Implementing USB-C cold socket behavior correctly, in hardware, per spec
 - Getting power-up sequencing timing right against the TUSB8044A'sdatasheet requirements
-- Producing a design that a contract manufacturer could actually build
 
 ---
 
@@ -67,7 +66,7 @@ The areas I specifically wanted to get right:
 
 ### 📡 Signal Integrity — 90Ω Differential Impedance
 
-All SuperSpeed and High-Speed differential pairs are routed exclusively on **L1 and L6**, each directly referenced to a solid, unbroken GND plane (L2 and L5). Routing follows the 5W rule — a minimum of 0.6mm clearance between any differential pair and other signals or copper pour, preventing nearby copper from acting as a parasitic coplanar ground and shifting the impedance off target.
+All SuperSpeed and High-Speed differential pairs are routed exclusively on **L1 and L6**, each directly referenced to a solid, unbroken GND plane (L2 and L5). Routing follows the 5W rule, a minimum of 0.6mm clearance between any differential pair and other signals or copper pour, preventing nearby copper from acting as a parasitic coplanar ground and shifting the impedance off target.
 
 | Parameter | SuperSpeed (USB 3.x) | High-Speed (USB 2.0) |
 |---|---|---|
@@ -98,34 +97,27 @@ All SuperSpeed and High-Speed differential pairs are routed exclusively on **L1 
 | L5 | GND Plane | Solid reference |
 | L6 | Signal | High-speed routing & components |
 
-Both signal layers carrying SuperSpeed traffic (L1 and L6) sit directly against a solid GND plane — there is no plane split for an SS pair to cross on either outer layer. Slow control signals are confined to L3, sandwiched between a GND plane (L2) and the power plane (L4), shielding them from both the high-speed layers and external noise.
+Both signal layers carrying HighSpeed and SuperSpeed traffic (L1 and L6) sit directly against a solid GND plane. Slow control signals are confined to L3, sandwiched between a GND plane (L2) and the power plane (L4), shielding them from both the high-speed layers and external noise.
 
 > [!NOTE]
 > The prepreg between L1–L2 and L5–L6 uses **2116 weave** instead of the
 > coarser 7628. The finer glass weave reduces the fiber-weave effect,
 > keeping the dielectric more homogeneous under the SuperSpeed pairs and
-> minimizing intra-pair skew. Full reasoning — including why 6 layers over
-> 4, and why an LDO over a second buck for the 1.1V rail — is documented in
+> minimizing intra-pair skew. Full reasoning, including why 6 layers over
+> 4, and why an LDO over a second buck for the 1.1V rail, is documented in
 > [`Docs/Design_Decisions.md`](Docs/Design_Decisions.md).
 
 ---
 
 ### 🔌 USB-C Cold Socket Compliance
 
-Per the USB Type-C specification, the downstream USB-C port's VBUS must
-remain de-energized until a cable is detected — unlike USB-A ports, which
-are permitted to be hot-socket. This is implemented with a single P-MOSFET
-(DMG2305UX) acting as a hardware enable gate, requiring no firmware:
+Per the USB Type-C specification, the downstream USB-C port's VBUS must remain de-energized until a cable is detected, unlike USB-A ports, which are permitted to be hot-socket. This is implemented with a single P-MOSFET acting as a hardware enable gate, requiring no firmware:
 
 - **Source** → PWRCTL1 (TUSB8044A, 3.3V when hub is active)
 - **Gate** → ID pin of the downstream HD3SS3220
 - **Drain** → EN1 of the TPS2561 power switch
 
-With no cable inserted, the ID pin floats and a 100kΩ gate-source resistor
-holds the MOSFET off — VBUS stays at 0V. On attach, the HD3SS3220 detects
-the Rd termination on CC and pulls ID low, turning on the MOSFET and
-enabling VBUS. The three USB-A ports use direct PWRCTL → EN connections, as
-hot-socket behavior is permitted there.
+With no cable inserted, the ID pin floats and a 100kΩ gate-source resistor holds the MOSFET off, VBUS stays at 0V. On attach, the HD3SS3220 detects the termination on CC and pulls ID low, turning on the MOSFET and enabling VBUS. The three USB-A ports use direct PWRCTL → EN connections, as hot-socket behavior is permitted there.
 
 ---
 
@@ -143,7 +135,7 @@ hot-socket behavior is permitted there.
 | LDO PG released → RC delay begins | ≈ 4.3 ms |
 | GRSTz reaches V_IH → TUSB8044A exits reset | ≈ 16 ms |
 
-The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor, R_eq ≈ 12.66kΩ gives t(V_IH) ≈ 11.8ms — comfortably above the 3ms minimum, with margin against the internal pull-up's full tolerance range.
+The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor, R_eq ≈ 12.66kΩ gives t(V_IH) ≈ 11.8ms, comfortably above the 3ms minimum, with margin against the internal pull-up's full tolerance range.
 
 ---
 
@@ -168,6 +160,11 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 
 <p align="center">
   <img src="Images/Layerstack_Visualizer.png" width="380"/>
+</p>
+
+<p align="center">
+  <img src="Images/Layerstack_Visualizer.png" width="380"/>
+  <img src="Manufacturing/Stackup/USB3.2_Hub_4Port_Stackup.png" width="380"/>
 </p>
 
 ---
@@ -202,8 +199,7 @@ The project is currently in manufacturing and will be updated.
 
 ## ✅ Validation Plan
 
-Once the assembled boards arrive, the following bring-up sequence will be
-performed — full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
+Once the assembled boards arrive, the following bring-up sequence will be performed. Full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
 
 - [ ] Visual inspection (solder joints on 0.5mm-pitch QFNs, connectors)
 - [ ] Power-on rail verification (5V / 3.3V / 1.1V at test points)
@@ -217,9 +213,10 @@ performed — full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
 
 ## 📚 Lessons Learned
 
-- First 6-layer controlled-impedance design — translating an impedance target into trace width/gap via a field solver, not a rule of thumb
+- First 6-layer controlled-impedance design, translating an impedance target into trace width/gap via a field solver
 - USB Type-C cold socket requirements, and implementing them with discrete hardware instead of an MCU
 - GRSTz timing constraints and the importance of accounting for an IC's *internal* pull-up tolerance, not just the external RC values
+- Power budget considerations
 - A real DFM review workflow with a manufacturer
 
 ---
