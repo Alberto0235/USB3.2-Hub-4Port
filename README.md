@@ -200,11 +200,8 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
   <img src="Images/PCBWay_Logo.png" width="180">
 </p>
 
-## 🤝 Manufacturing Partner &nbsp;<img src="Images/PCBWay_Logo.png" height="22" valign="middle">
+## 🤝 Manufacturing Partner &nbsp;<img src="Images/PCBWay_Logo.png" height="22" valign="bottom">
 
-## 🤝 Manufacturing Partner
-
-<sub><img src="Images/PCBWay_Logo.png" height="20"> Partner since prototype Rev A</sub>
 
 This prototype is being manufactured and assembled by **PCBWay**.
 
