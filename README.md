@@ -159,12 +159,13 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 ### Stackup Development
 
 <p align="center">
-  <img src="Images/Layerstack_Visualizer.png" width="380"/>
+  <img src="Manufacturing/Stackup/USB3.2_Hub_4Port_Stackup.png" width="400"/>
+  <img src="Images/Layerstack_Visualizer.png" width="360"/>
 </p>
 
 <p align="center">
-  <img src="Images/Layerstack_Visualizer.png" width="380"/>
-  <img src="Manufacturing/Stackup/USB3.2_Hub_4Port_Stackup.png" width="380"/>
+  <img src="Images/Stackup.png" width="400"/>
+  <img src="Images/Layerstack_Visualizer.png" width="360"/>
 </p>
 
 ---
