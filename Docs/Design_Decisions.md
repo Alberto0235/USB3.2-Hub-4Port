@@ -1,66 +1,175 @@
 # Design Decisions
 
-## Why 6 layers instead of 4
+## Why a 6-Layer Stackup
 
-USB 3.2 Gen 1 SS pairs at 5Gbps require a continuous, 
-uninterrupted GND reference plane directly adjacent to 
-the signal layer. With 4 layers (Sig/GND/PWR/Sig), the 
-bottom signal layer references the power plane — which 
-has splits for 5V/3.3V/1.1V. Any SS trace crossing a 
-plane split sees an impedance discontinuity and a broken 
-return path. 6 layers allows L1→L2(GND) and L6→L5(GND), 
-giving both signal layers a solid reference.
+The primary design goal was maintaining controlled impedance and continuous return paths for all USB 3.2 Gen 1 SuperSpeed signals.
 
-## Why 2116 prepreg instead of 7628
+A conventional 4-layer stackup (Signal / GND / Power / Signal) would force one of the two outer signal layers to reference the power plane. Since the design contains multiple voltage domains (5V, 3.3V, and 1.1V), the power plane requires splits and polygon boundaries that can interrupt high-frequency return currents.
 
-The 7628 weave is coarser — the glass fiber bundles are 
-larger and more spaced. At 5Gbps, if one trace of a 
-differential pair runs over glass fiber and the other 
-over resin, they see different Dk values and arrive at 
-the receiver slightly skewed (fiber weave effect). The 
-2116 has a much finer weave, making the dielectric more 
-homogeneous and reducing skew caused by the substrate 
-itself. It also gives a thinner prepreg (0.12mm vs 
-0.18mm), which means narrower traces for 90Ω — 0.136mm 
-instead of ~0.25mm — making QFN breakout feasible.
+The selected 6-layer stackup allows both outer signal layers to reference solid, uninterrupted ground planes:
 
-## Why LDO for 1.1V instead of a second buck
+* L1 → referenced to L2 (GND)
+* L6 → referenced to L5 (GND)
 
-The 1.1V rail powers the TUSB8044A core and PLL. Buck 
-converters introduce switching noise at their operating 
-frequency and harmonics. A LDO (TPS74801) provides a 
-cleaner supply with no switching noise, which is 
-important for PLL stability. The voltage drop is only 
-2.2V at ~680mA (1.5W dissipated), which is acceptable 
-given the TPS74801's RθJA of 35.6°C/W — TJ ≈ 78°C, 
-well within the 125°C limit. TI's own reference design 
-for the TUSB8044A uses an LDO for this rail.
+This guarantees a continuous return path for all SuperSpeed and High-Speed USB signals regardless of routing location.
 
-## Why HD3SS3220 for USB-C CC logic
+Additional benefits include:
 
-The TUSB8044A handles the USB data path but does not 
-include CC logic for USB-C orientation detection and 
-current advertisement. The HD3SS3220 adds a 2:1 SS MUX 
-that routes the correct SS pair based on cable 
-orientation (detected via CC), plus Rp/Rd termination 
-for DFP/UFP mode. It operates in GPIO mode (no I2C 
-required), keeping the design MCU-free.
+* Improved EMI performance
+* Easier impedance control
+* Better isolation between high-speed and low-speed signals
+* Dedicated internal power distribution layer
 
-## Why cold socket on USB-C downstream only
+The final stackup is:
 
-USB-A ports are defined as "hot socket" by the USB spec 
-— VBUS is always present on the connector. USB-C 
-requires VBUS to be de-energized before cable insertion 
-(cold socket). The P-MOSFET implementation uses the 
-HD3SS3220 ID pin as an attach signal: VBUS is only 
-enabled after the CC controller confirms a valid device 
-is connected.
+| Layer | Function                        |
+| ----- | ------------------------------- |
+| L1    | High-speed signals & components |
+| L2    | Solid GND plane                 |
+| L3    | Low-speed control signals       |
+| L4    | Power distribution              |
+| L5    | Solid GND plane                 |
+| L6    | High-speed signals & components |
 
-## Why 5W spacing (0.6mm) around SS differential pairs
+---
 
-A copper pour placed too close to a microstrip trace 
-acts as a coplanar ground, reducing the effective 
-impedance from the target 90Ω. The 5W rule (clearance 
-= 5× trace width = 5 × 0.136mm = 0.68mm ≈ 0.6mm) 
-ensures the copper pour has negligible effect on 
-differential impedance.
+## Why 2116 Prepreg for the Outer High-Speed Layers
+
+The impedance-controlled USB pairs are routed exclusively on the outer layers (L1 and L6).
+
+For these layers, 2116 prepreg was selected between:
+
+* L1 ↔ L2
+* L5 ↔ L6
+
+instead of the coarser 7628 weave.
+
+Compared to 7628, 2116 provides:
+
+* A more homogeneous dielectric environment
+* Reduced fiber-weave induced skew
+* Thinner dielectric spacing
+* More practical trace geometries for USB routing
+
+The thinner dielectric also reduces the trace width required to achieve 90Ω differential impedance.
+
+Using the selected stackup:
+
+* Dielectric thickness = 0.12mm
+* Differential impedance target = 90Ω
+* Resulting geometry = 0.136mm trace width / 0.127mm gap
+
+These dimensions allow straightforward breakout from the TUSB8044A and HD3SS3220 without excessive layer transitions.
+
+The internal dielectric layers continue to use standard materials where signal integrity requirements are less critical.
+
+---
+
+## Why an LDO for the 1.1V Core Rail
+
+The TUSB8044A requires a dedicated 1.1V rail for its internal core and PLL circuitry.
+
+Two approaches were evaluated:
+
+1. Secondary buck converter
+2. Linear regulator
+
+A buck converter would improve efficiency but introduce switching ripple and high-frequency noise directly onto the PLL supply.
+
+The selected TPS74801 LDO provides:
+
+* Low output noise
+* High PSRR
+* Simplified sequencing
+* Reduced risk of PLL-related stability issues
+
+Thermal analysis showed the additional dissipation remains acceptable within the expected operating conditions.
+
+This approach is also consistent with Texas Instruments reference implementations for the TUSB8044A family.
+
+---
+
+## Why HD3SS3220 for USB-C Control
+
+The TUSB8044A manages the USB hub functionality but does not provide USB Type-C attach detection or SuperSpeed orientation management.
+
+The HD3SS3220 was selected because it combines:
+
+* USB Type-C CC controller
+* Orientation detection
+* SuperSpeed lane switching
+* Current advertisement logic
+
+Operating the device in GPIO mode eliminates the need for firmware or an additional microcontroller.
+
+This keeps the design fully hardware-controlled while maintaining compliance with USB Type-C requirements.
+
+---
+
+## Why USB-C Cold Socket Implementation
+
+USB Type-C ports must not present VBUS until a valid attachment has been detected through the CC pins.
+
+To satisfy this requirement, the downstream USB-C port uses a hardware-controlled enable path:
+
+HD3SS3220 → PMOS → TPS2561 Enable
+
+When no cable is present:
+
+* CC detection remains inactive
+* The PMOS remains off
+* VBUS is disconnected
+
+Once a valid attachment is detected:
+
+* The HD3SS3220 asserts its ID output
+* The PMOS turns on
+* The TPS2561 power switch is enabled
+* VBUS becomes available at the connector
+
+No firmware participation is required.
+
+The three USB-A ports remain permanently powered because USB-A connectors are allowed to operate as hot-socket ports.
+
+---
+
+## Why Copper Clearance Matters
+
+High-speed differential pairs were routed with a minimum clearance of approximately 0.6mm from surrounding copper features.
+
+The objective is to prevent nearby copper from acting as an unintended coplanar reference plane.
+
+If copper is placed too close to a microstrip pair:
+
+* Effective impedance decreases
+* Field distribution changes
+* Differential impedance may deviate from the target value
+
+The selected clearance follows the 5W guideline and keeps impedance variation negligible compared to manufacturing tolerances.
+
+This spacing was applied consistently around all SuperSpeed differential pairs throughout the design.
+
+---
+
+## Why a Hardware-Only Architecture
+
+A design goal from the beginning was eliminating unnecessary firmware.
+
+Functions often delegated to a microcontroller are instead handled through dedicated hardware:
+
+* USB-C attach detection
+* Orientation detection
+* Power sequencing
+* Current limiting
+* Overcurrent reporting
+* Reset timing
+
+Advantages include:
+
+* Reduced system complexity
+* Faster startup
+* No firmware maintenance
+* Lower validation effort
+* Fewer failure modes
+
+The final design contains no MCU and requires no software for normal operation.
