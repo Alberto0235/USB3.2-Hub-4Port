@@ -25,27 +25,17 @@ High-Speed Hardware Design
 
 ## 🎯 Project Goal
 
-This project started as a question: could I take a real, commercially
-relevant USB 3.x system — not a blinking-LED board — from architecture all
-the way through to a manufacturable, impedance-controlled 6-layer PCB?
+This project started as a question: could I take a commercially relevant USB 3.x system from architecture all the way through to a manufacturable, impedance-controlled 6-layer PCB?
 
-The hub is built around the Texas Instruments **TUSB8044A**, fully
-bus-powered over USB-C, with one USB-C downstream port (cold-socket
-compliant) and three USB-A ports, each with independent current limiting.
-Every piece of control logic — Type-C attach detection, power-up sequencing,
-overcurrent handling — runs entirely in hardware, with no microcontroller.
+The hub is built around the Texas Instruments **TUSB8044A**, fully bus-powered over USB-C, with one USB-C downstream port (cold-socket compliant) and three USB-A ports, each with independent current limiting. Type-C attach detection, power-up sequencing and overcurrent handling are implemented entirely in hardware, with no microcontroller required.
 
 The areas I specifically wanted to get right:
 
-- Routing 5 Gbps SuperSpeed differential pairs with real impedance control,
-  not just "default" trace widths
-- Understanding *why* a 6-layer stackup matters for SI, not just using one
-  because it's common
+- Routing 5 Gbps SuperSpeed differential pairs with impedance control
+- Understanding the 6-layer stackup advantages
 - Implementing USB-C cold socket behavior correctly, in hardware, per spec
-- Getting power-up sequencing timing right against the TUSB8044A's
-  datasheet requirements
-- Producing a design that a contract manufacturer could actually build —
-  and finding out where my assumptions were wrong during DFM review
+- Getting power-up sequencing timing right against the TUSB8044A'sdatasheet requirements
+- Producing a design that a contract manufacturer could actually build
 
 ---
 
@@ -59,7 +49,6 @@ The areas I specifically wanted to get right:
 - [x] DFM review (PCBWay)
 - [ ] PCB fabrication & assembly
 - [ ] Bring-up & validation
-- [ ] Release v1.0 — with photos & test results
 
 ---
 
@@ -82,23 +71,14 @@ The areas I specifically wanted to get right:
 
 ### 📡 Signal Integrity — 90Ω Differential Impedance
 
-All SuperSpeed and High-Speed differential pairs are routed exclusively on
-**L1 and L6**, each directly referenced to a solid, unbroken GND plane (L2
-and L5). Routing follows the 5W rule — a minimum of 0.6mm clearance between
-any differential pair and other signals or copper pour, preventing nearby
-copper from acting as a parasitic coplanar ground and shifting the impedance
-off target.
+All SuperSpeed and High-Speed differential pairs are routed exclusively on **L1 and L6**, each directly referenced to a solid, unbroken GND plane (L2 and L5). Routing follows the 5W rule — a minimum of 0.6mm clearance between any differential pair and other signals or copper pour, preventing nearby copper from acting as a parasitic coplanar ground and shifting the impedance off target.
 
 | Parameter | SuperSpeed (USB 3.x) | High-Speed (USB 2.0) |
 |---|---|---|
-| Target differential impedance | 90Ω ±10% | 90Ω ±15% |
-| Trace width / gap | 0.136mm / 0.127mm | per Altium field solver |
+| Target differential impedance | 90Ω ±10% | 90Ω ±10% |
 | Intra-pair skew | ≤ 0.15mm (≈1.2ps) | ≤ 3.8mm |
 | Max via count per pair | 2 | 4 |
 | AC coupling | 100nF, 0402, X7R — TX paths only | — |
-
-With the 2116 prepreg (0.12mm, Dk = 4.45) between L1–L2 and L5–L6, the field
-solver converges to **90.03Ω** — a 0.04% deviation from target.
 
 <p align="center">
   <img src="Images/D90_Impedance_Profile.png" width="600"/>
@@ -115,18 +95,14 @@ solver converges to **90.03Ω** — a 0.04% deviation from target.
 
 | Layer | Type | Function |
 |---|---|---|
-| L1 | Signal | USB SS/HS pairs, components |
-| L2 | GND Plane | Solid reference, no splits |
-| L3 | Signal | Slow signals only (I2C, PWRCTL, OVERCUR, GRSTz) |
-| L4 | Power | Polygon pours: 5V / 3.3V / 1.1V |
-| L5 | GND Plane | Solid reference, no splits |
-| L6 | Signal | USB SS/HS pairs, routing |
+| L1 | Signal | High-speed routing & components |
+| L2 | GND Plane | Solid reference |
+| L3 | Signal | Low-speed control signals |
+| L4 | Power Plane | 5V / 3.3V / 1.1V |
+| L5 | GND Plane | Solid reference |
+| L6 | Signal | High-speed routing & components |
 
-Both signal layers carrying SuperSpeed traffic (L1 and L6) sit directly
-against a solid GND plane — there is no plane split for an SS pair to cross
-on either outer layer. Slow control signals are confined to L3, sandwiched
-between a GND plane (L2) and the power plane (L4), shielding them from both
-the high-speed layers and external noise.
+Both signal layers carrying SuperSpeed traffic (L1 and L6) sit directly against a solid GND plane — there is no plane split for an SS pair to cross on either outer layer. Slow control signals are confined to L3, sandwiched between a GND plane (L2) and the power plane (L4), shielding them from both the high-speed layers and external noise.
 
 > [!NOTE]
 > The prepreg between L1–L2 and L5–L6 uses **2116 weave** instead of the
@@ -171,10 +147,7 @@ hot-socket behavior is permitted there.
 | LDO PG released → RC delay begins | ≈ 4.3 ms |
 | GRSTz reaches V_IH → TUSB8044A exits reset | ≈ 16 ms |
 
-The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz
-(R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor,
-R_eq ≈ 12.66kΩ gives t(V_IH) ≈ 11.8ms — comfortably above the 3ms minimum,
-with margin against the internal pull-up's full tolerance range.
+The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor, R_eq ≈ 12.66kΩ gives t(V_IH) ≈ 11.8ms — comfortably above the 3ms minimum, with margin against the internal pull-up's full tolerance range.
 
 ---
 
@@ -229,18 +202,9 @@ with margin against the internal pull-up's full tolerance range.
 
 This prototype is being manufactured and assembled by **PCBWay**.
 
-During the engineering review process, the PCBWay team provided valuable DFM
-feedback and identified a via-in-pad issue before fabrication. The issue was
-corrected before production, avoiding a potentially costly prototype
-revision on a 6-layer impedance-controlled run.
+During the engineering review process, the PCBWay team provided valuable DFM feedback and identified a via-in-pad issue before fabrication. The issue was corrected before production, avoiding a potentially costly prototype revision on a 6-layer impedance-controlled run.
 
-The project is currently in manufacturing and will be updated with:
-
-- Assembly quality inspection
-- PCB quality assessment
-- Bring-up results
-- High-resolution board photography
-- Functional validation
+The project is currently in manufacturing and will be updated.
 
 ---
 
@@ -261,17 +225,10 @@ performed — full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
 
 ## 📚 Lessons Learned
 
-- First 6-layer controlled-impedance design — translating an impedance
-  target into trace width/gap via a field solver, not a rule of thumb
-- USB Type-C cold socket requirements, and implementing them with discrete
-  hardware instead of an MCU
-- GRSTz timing constraints and the importance of accounting for an IC's
-  *internal* pull-up tolerance, not just the external RC values
-- A real DFM review workflow with a contract manufacturer — including a
-  via-in-pad catch that would have caused issues at assembly
-
-> [!NOTE]
-> More to come after bring-up and validation.
+- First 6-layer controlled-impedance design — translating an impedance target into trace width/gap via a field solver, not a rule of thumb
+- USB Type-C cold socket requirements, and implementing them with discrete hardware instead of an MCU
+- GRSTz timing constraints and the importance of accounting for an IC's *internal* pull-up tolerance, not just the external RC values
+- A real DFM review workflow with a manufacturer
 
 ---
 
@@ -356,6 +313,6 @@ You are welcome to study, modify, manufacture, and build upon this design.
 
 **Alberto Marrone**
 MSc Student, Electronics Engineering — Politecnico di Milano
-[LinkedIn](your-linkedin-url)
+[LinkedIn](https://linkedin.com/in/alberto-marrone-444192274)
 
 *This project is provided for educational and portfolio purposes.*
