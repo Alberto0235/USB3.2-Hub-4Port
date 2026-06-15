@@ -19,6 +19,7 @@ Additional benefits include:
 * Easier impedance control
 * Better isolation between high-speed and low-speed signals
 * Dedicated internal power distribution layer
+* Easier routing
 
 The final stackup is:
 
@@ -37,12 +38,7 @@ The final stackup is:
 
 The impedance-controlled USB pairs are routed exclusively on the outer layers (L1 and L6).
 
-For these layers, 2116 prepreg was selected between:
-
-* L1 ↔ L2
-* L5 ↔ L6
-
-instead of the coarser 7628 weave.
+Between these layers the 2116 prepreg was selected instead of the coarser 7628 weave.
 
 Compared to 7628, 2116 provides:
 
@@ -57,7 +53,7 @@ Using the selected stackup:
 
 * Dielectric thickness = 0.12mm
 * Differential impedance target = 90Ω
-* Resulting geometry = 0.136mm trace width / 0.127mm gap
+* Resulting geometry for the Diff pairs = 0.136mm trace width / 0.127mm gap
 
 These dimensions allow straightforward breakout from the TUSB8044A and HD3SS3220 without excessive layer transitions.
 
@@ -100,17 +96,13 @@ The HD3SS3220 was selected because it combines:
 * SuperSpeed lane switching
 * Current advertisement logic
 
-Operating the device in GPIO mode eliminates the need for firmware or an additional microcontroller.
-
 This keeps the design fully hardware-controlled while maintaining compliance with USB Type-C requirements.
 
 ---
 
 ## Why USB-C Cold Socket Implementation
 
-USB Type-C ports must not present VBUS until a valid attachment has been detected through the CC pins.
-
-To satisfy this requirement, the downstream USB-C port uses a hardware-controlled enable path:
+USB Type-C ports must not present VBUS until a valid attachment has been detected through the CC pins. To satisfy this requirement, the downstream USB-C port uses a hardware-controlled enable path:
 
 HD3SS3220 → PMOS → TPS2561 Enable
 
@@ -127,7 +119,7 @@ Once a valid attachment is detected:
 * The TPS2561 power switch is enabled
 * VBUS becomes available at the connector
 
-No firmware participation is required.
+No firmware is required.
 
 The three USB-A ports remain permanently powered because USB-A connectors are allowed to operate as hot-socket ports.
 
@@ -135,27 +127,22 @@ The three USB-A ports remain permanently powered because USB-A connectors are al
 
 ## Why Copper Clearance Matters
 
-High-speed differential pairs were routed with a minimum clearance of approximately 0.6mm from surrounding copper features.
-
-The objective is to prevent nearby copper from acting as an unintended coplanar reference plane.
+High-speed differential pairs were routed with a minimum clearance of approximately 0.6mm from surrounding copper features. The objective is to prevent nearby copper from acting as an unintended coplanar reference plane and avoid crosstalk.
 
 If copper is placed too close to a microstrip pair:
 
 * Effective impedance decreases
 * Field distribution changes
 * Differential impedance may deviate from the target value
+* Crosstalk
 
-The selected clearance follows the 5W guideline and keeps impedance variation negligible compared to manufacturing tolerances.
-
-This spacing was applied consistently around all SuperSpeed differential pairs throughout the design.
+The selected clearance follows the 5W guideline and keeps impedance variation negligible compared to manufacturing tolerances. This spacing was applied consistently around all HighSpeed and SuperSpeed differential pairs throughout the design.
 
 ---
 
 ## Why a Hardware-Only Architecture
 
-A design goal from the beginning was eliminating unnecessary firmware.
-
-Functions often delegated to a microcontroller are instead handled through dedicated hardware:
+A design goal from the beginning was eliminating unnecessary firmware. Functions often delegated to a microcontroller are instead handled through dedicated hardware:
 
 * USB-C attach detection
 * Orientation detection
