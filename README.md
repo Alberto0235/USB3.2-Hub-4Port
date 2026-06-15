@@ -164,8 +164,8 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 </p>
 
 <p align="center">
-  <img src="Images/Stackup.png" width="430"/>
-  <img src="Images/Layerstack_Visualizer.png" width="330"/>
+  <img src="Images/Stackup.png" width="440"/>
+  <img src="Images/Layerstack_Visualizer.png" width="320"/>
 </p>
 
 ---
