@@ -208,7 +208,7 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 ## 🤝 Manufacturing Partner
 
 Manufacturing and assembly for this prototype are being provided by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" align="middle"></a>.
-Manufacturing and assembly for this prototype are being provided by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" style="vertical-align: +6px;"></a>.
+Manufacturing and assembly for this prototype are being provided by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" align="absmiddle"></a>.
 
 During the engineering review process, the PCBWay team provided valuable DFM feedback and identified a via-in-pad issue before fabrication. The issue was corrected before production, avoiding a potentially costly prototype revision on a 6-layer impedance-controlled run.
 
