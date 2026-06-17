@@ -143,11 +143,11 @@ The hub negotiates 3A from the upstream USB-C port. Hub control circuitry and al
 
 ---
 
-### ⏱️ Power Delivery Sequencing
+### ⏱️ Power Sequencing
 
 > [!IMPORTANT]
 > The TUSB8044A requires GRSTz to remain asserted for ≥3ms after both VDD
-> (1.1V) and VDD33 (3.3V) enter their recommended operating range.
+> (1.1V and 3.3V) enter their recommended operating range.
 
 | Event | Time |
 |---|---|
