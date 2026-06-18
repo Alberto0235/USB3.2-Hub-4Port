@@ -42,7 +42,7 @@ The areas I specifically wanted to get right:
 - [x] PCB layout & routing
 - [x] Manufacturing files (Gerbers, BOM, Pick & Place)
 - [x] DFM review (PCBWay)
-- [x] PCB fabrication & assembly
+- [ ] PCB fabrication & assembly
 - [ ] Bring-up & validation
 
 ---
