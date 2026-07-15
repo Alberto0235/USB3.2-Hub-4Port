@@ -169,7 +169,7 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 <p align="center">
   <img src="Images/Bringup_GRSTz_PowerOn_Timing.png" width="600"/>
 </p>
-<p align="center"><em>Channel 1 — VBUS 5V.  Channel 2 — GRSTz.  T<sub>reset</sub> = 42.6 ms from power-on.</em></p>
+<p align="center"><em>Channel 1 — VBUS 5V.  Channel 2 — GRSTz.  T = 42.6 ms from power-on.</em></p>
 
 ---
 
