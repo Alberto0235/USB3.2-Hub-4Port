@@ -42,8 +42,8 @@ The areas I specifically wanted to get right:
 - [x] PCB layout & routing
 - [x] Manufacturing files (Gerbers, BOM, Pick & Place)
 - [x] DFM review (PCBWay)
-- [ ] PCB fabrication & assembly
-- [ ] Bring-up & validation
+- [x] PCB fabrication & assembly
+- [x] Bring-up & validation
 
 ---
 
@@ -158,6 +158,7 @@ The hub negotiates 3A from the upstream USB-C port. Hub control circuitry and al
 | GRSTz reaches V_IH → TUSB8044A exits reset | ≈ 16 ms |
 
 The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor, R_eq ≈ 12.66kΩ. The time delay is comfortably above the 3ms minimum required after both supplies are stable.
+| GRSTz de-asserted (measured at 3.26 V) | **42.6 ms measured** |
 
 ---
 
