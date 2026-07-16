@@ -18,7 +18,7 @@ High-Speed Hardware Design
 </p>
 
 <p align="center">
-<img src="Images/PCB_Assembled_USB_Test.png" width="850">
+<img src="Images/PCB_Assembled_Top.png" width="850">
 </p>
 
 ---
