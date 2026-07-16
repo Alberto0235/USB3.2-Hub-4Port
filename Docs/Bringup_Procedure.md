@@ -18,7 +18,7 @@ Check for solder bridges and cold joints on the TUSB8044A (0.5mm-pitch VQFN), th
 
 ## Step 2 — Power-On (No USB Connection)
 
-Do not connect USB yet. Apply 5V to the VBUS test point and measure:
+Do not connect USB yet. Apply a current-limited 5V supply to the VBUS test point and measure:
 
 - TP3 (5V_VBUS): 5.0V ±5%
 - TP4 (3V3_VDD): 3.3V ±3%
@@ -36,7 +36,7 @@ Verify that GRSTz remains asserted during power-up and de-asserts only after all
 
 ## Step 4 — USB Enumeration
 
-Connect to a USB 3.x capable host. The hub should enumerate with the VID:PID programmed into the EEPROM (see Known Configuration below). Check Device Manager / `lsusb` for both the SuperSpeed and High-Speed hub interfaces.
+Connect to a USB 3.x capable host. The hub should enumerate with the VID:PID programmed into the EEPROM (see Known Configuration below). Check Device Manager (Windows) or run `lsusb -v` (Linux) for both the SS and HS hub interfaces.
 
 ---
 
