@@ -164,16 +164,14 @@ The hub negotiates 3A from the upstream USB-C port. Hub control circuitry and al
 The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 14.5–25kΩ): with an external 100kΩ resistor and a 1µF capacitor, R_eq ≈ 12.66kΩ. The time delay is comfortably above the 3ms minimum required after both supplies are stable.
 
 > [!NOTE]
-> The measured reset de-assertion time of **42.6 ms** from VBUS applied to GRSTz reaching
-> 3.26 V comfortably exceeds the 3 ms minimum required by the TUSB8044A after both supply
-> rails enter their recommended operating range.  The longer-than-estimated value is
-> consistent with the TUSB8044A's internal pull-up sitting near the upper end of its 14.5–25 kΩ
-> tolerance band.
+> The measured GRSTz de-assertion delay from VBUS rise to the logic-high threshold is **tGRSTz = 42.6 ms**
+> This delay is dominated by the TUSB8044A internal reset release mechanism and the external reset network.
+> The measured value confirms that GRSTz remains asserted long enough during power-up sequencing.
 
 <p align="center">
   <img src="Images/Bringup_GRSTz_PowerOn_Timing.png" width="600"/>
 </p>
-<p align="center"><em>Channel 1 — VBUS 5V.  Channel 2 — GRSTz.  T = 42.6 ms from power-on.</em></p>
+<p align="center"><em>Channel 1 — VBUS 5V.  Channel 2 — GRSTz.  tGRSTz = 42.6 ms from power-on.</em></p>
 
 ---
 
