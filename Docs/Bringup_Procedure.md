@@ -30,7 +30,7 @@ If any rail is missing, check the corresponding regulator before proceeding.
 
 ## Step 3 — GRSTz Timing (Oscilloscope)
 
-Probe TP8 (GRSTz) during power-on. The signal should rise to V_IH approximately 16ms after VBUS is applied — see [`Design_Decisions.md`](Design_Decisions.md) for the full timing breakdown (power-up sequencing + RC delay).
+Verify that GRSTz remains asserted during power-up and de-asserts only after all supply rails have stabilized. On the prototype board, the measured delay from VBUS application to GRSTz reaching 3.28V was 42.6ms.
 
 ---
 
@@ -42,7 +42,7 @@ Connect to a USB 3.x capable host. The hub should enumerate with the VID:PID pro
 
 ## Step 5 — Per-Port Functional Test
 
-Connect a USB 3.0 flash drive to each port in sequence. Verify the drive is recognized at SuperSpeed link rate and that data transfer works correctly.
+Connect a USB 3.0 flash drive to each port in sequence. Verify the drive is recognized at SuperSpeed link rate and that data transfer works correctly. 
 
 ---
 
@@ -68,7 +68,21 @@ Procedure:
 
 ---
 
-## Known Configuration (Rev A)
+## Step 7 — EEPROM Verification
+
+With the hub enumerated, run the read utility to confirm the configuration is loaded correctly:
+
+```bash
+python Scripts/TUSB8044A_EEPROM_READ.py
+```
+
+Expected output: Signature `0x55`, Manufacturer `Alberto Marrone`, Product `USB 3.2 Gen1 4-Port Hub`.
+
+---
+
+## Test Conditions (Rev A)
 
 - No USB PD — 5V only, max 3A negotiated from upstream
 - Billboard disabled (no USB-C Alternate Mode implemented)
+- Idle power consumption: 0.02 A @ 5.041 V (100 mW)
+- GRSTz measured de-assertion
