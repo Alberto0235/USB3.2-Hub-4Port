@@ -167,6 +167,8 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 > The measured GRSTz de-assertion delay from VBUS rise to the logic-high threshold is **tGRSTz = 42.6 ms**
 > This delay is dominated by the TUSB8044A internal reset release mechanism and the external reset network.
 > The measured value confirms that GRSTz remains asserted long enough during power-up sequencing.
+> The difference between the expected and measured timing is attributed to device tolerances,
+> reset circuitry characteristics and measurement conditions.
 
 <p align="center">
   <img src="Images/Bringup_GRSTz_PowerOn_Timing.png" width="600"/>
@@ -176,6 +178,17 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 ---
 
 ## 🖼️ Design Gallery
+
+### Assembled PCB
+
+<p align="center">
+  <img src="Images/PCB_Assembled_Top.png" width="780"/>
+</p>
+
+<p align="center">
+  <img src="Images/PCB_Bare_Top_Bottom.png" width="380"/>
+  <img src="Images/PCB_Assembled_Ports_Active.png" width="380"/>
+</p>
 
 ### PCB Render
 
@@ -229,17 +242,131 @@ The project is currently in manufacturing and will be updated.
 
 ---
 
-## ✅ Validation Plan
+## ✅ Bring-Up Results
 
-Once the assembled boards arrive, the following bring-up sequence will be performed. Full procedure in [`Docs/Bringup.md`](Docs/Bringup.md):
+Validation was performed on the first prototype assembled by PCBWay.
+Full procedure and raw measurements are documented in [`Docs/Bringup.md`](Docs/Bringup.md).
 
-- [ ] Visual inspection (solder joints on 0.5mm-pitch QFNs, connectors)
-- [ ] Power-on rail verification (5V / 3.3V / 1.1V at test points)
-- [ ] GRSTz timing verification (oscilloscope)
-- [ ] USB enumeration (VID/PID check)
-- [ ] Per-port functional test (USB 2.0 and USB 3.2 devices)
-- [ ] Overcurrent / fault test per port
-- [ ] BC1.2 charging detection test
+### Power Rails
+
+All rails measured at test points with no downstream load.
+
+| Rail | Target | Measured | Status |
+|---|---|---|---|
+| VBUS (upstream input) | 5.000 V | 5.018 V | ✅ |
+| VDD33 | 3.300 V | 3.325 V | ✅ |
+| VDD (1.1V LDO) | 1.100 V | 1.097 V | ✅ |
+| GRSTz (at de-assertion) | — | 3.265 V | ✅ |
+| VBUS downstream USB-A | 5.000 V | 5.018 V | ✅ |
+
+Idle power consumption (hub only, no downstream devices): **0.02 A @ 5.041 V → 0.1 W.**
+
+### USB Enumeration
+
+Both logical hub interfaces enumerate correctly on the first attempt:
+
+| Interface | PID | Speed | Status |
+|---|---|---|---|
+| USB 2.0 HS hub | 0x8442 | 480 Mbit/s | ✅ |
+| USB 3.x SS hub | 0x8440 | 5 Gbit/s | ✅ |
+| HID-to-I2C bridge | 0x82FF | HS | ✅ |
+
+EEPROM custom strings loaded and verified via [USB descriptor inspection](#-eeprom-configuration):
+
+Manufacturer : Alberto Marrone
+Product      : USB 3.2 Gen1 4-Port Hub
+Serial       : F10100616729  (TI factory UUID)
+
+<p align="center">
+  <img src="Images/Bringup_UsbTreeView_Connected.png" width="750"/>
+</p>
+<p align="center"><em>UsbTreeView — HS hub (Alberto Marrone, webcam on port 4) and SS hub (two Kingston DataTraveler 3.0 on ports 2 and 4).</em></p>
+
+### SuperSpeed Performance
+
+Validated using USBDeview on a Kingston DataTraveler 3.0 device.
+
+| Metric | Value |
+|---|---|
+| Sequential read | **102.86 MB/s** |
+| Sequential write | 16.36 MB/s |
+| Connection speed confirmed | SuperSpeed (5 Gbit/s) |
+
+Read throughput of 102 MB/s is incompatible with USB 2.0 High-Speed (theoretical max ≈ 40 MB/s), confirming the SuperSpeed link is established end-to-end.
+
+<p align="center">
+  <img src="Images/Bringup_SpeedTest_SuperSpeed.png" width="500"/>
+</p>
+
+### Other Tests
+
+- [x] Visual inspection (0.5 mm-pitch QFN solder joints, connectors)
+- [x] GRSTz power-on timing (42.6 ms — see [Power Sequencing](#%EF%B8%8F-power-sequencing))
+- [x] Per-port functional test — all 4 ports enumeration confirmed
+- [x] USB 2.0 device compatibility
+- [x] USB 3.0 device compatibility
+- [x] Hot-plug on all four ports
+- [x] USB-C cold socket — VBUS held at 0 V until cable attach confirmed
+- [x] BC1.2 CDP charging verified
+
+---
+
+## 🔧 EEPROM Configuration
+
+The TUSB8044A reads a Microchip **24LC08BT-I/OT** EEPROM (8 Kbit, SOT-23) at power-up to load
+custom USB descriptors and port configuration. Programming is performed via the chip's internal
+**HID-to-I2C bridge** (VID `0x0451`, PID `0x82FF`) — no external programmer required.
+
+Two Python utilities are provided in [`Scripts/EEPROM/`](Scripts/EEPROM/):
+
+| Script | Purpose |
+|---|---|
+| `TUSB8044A_EEPROM_WRITE.py` | Writes the full configuration and verifies every byte before activating |
+| `TUSB8044A_EEPROM_READ.py` | Reads all 1024 bytes, prints a register-annotated hex dump, saves a `.bin` |
+
+### Requirements
+
+```bash
+pip install hidapi
+```
+
+On Windows, run CMD as **Administrator** (required for raw HID access).
+
+### Write — program the hub
+
+Edit the `USER CONFIGURATION` block at the top of `TUSB8044A_EEPROM_WRITE.py`:
+
+```python
+MANUFACTURER = "Alberto Marrone"       # manufacturer string (max 32 chars)
+PRODUCT      = "USB 3.2 Gen1 4-Port Hub"  # product string (max 32 chars)
+VID_HUB      = 0x0451                  # keep TI VID for prototypes
+PID_HUB      = 0x8440                  # TUSB8044A SS hub PID
+BC12_MASK    = 0x0F                    # BC1.2 CDP enable mask (0x0F = all 4 ports)
+```
+
+Then run:
+
+```bash
+python TUSB8044A_EEPROM_WRITE.py
+```
+
+The 0x55 signature byte that activates the configuration is written only after all registers and strings have been verified. If interrupted, the hub safely falls back to TI factory defaults.
+
+### Read — dump and inspect the EEPROM
+
+```bash
+python TUSB8044A_EEPROM_READ.py
+```
+
+Outputs a hex dump of Bank 0 (configuration registers + strings), annotates every key
+register, decodes the manufacturer/product strings, and saves the full 1024-byte image
+to `TUSB8044A_EEPROM.bin` in the working directory.
+
+### Recovery
+
+If the hub shows **"Unknown USB Device"** after a failed write: short EEPROM U6 **pin 3 (SDA)
+to pin 2 (GND)** while inserting the USB cable. The TUSB8044A I2C read times out, the hub
+boots from TI factory defaults, and the write utility can be re-run.
 
 ---
 
