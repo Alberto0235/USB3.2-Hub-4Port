@@ -1,5 +1,3 @@
-
-
 <h1 align="center">⚡ USB 3.2 Gen 1 — 4-Port Hub</h1>
 
 <p align="center">
@@ -25,7 +23,7 @@ High-Speed Hardware Design
 
 ## 🎯 Project Goal
 
-This project started as a question: could I take a commercially relevant USB 3.x system from architecture all the way through to a manufacturable, impedance-controlled 6-layer PCB?
+This project started as a question: could I take a commercial-grade USB 3.x system from architecture all the way through to a manufacturable, impedance-controlled 6-layer PCB?
 
 The hub is built around the Texas Instruments **TUSB8044A**, fully bus-powered over USB-C, with one USB-C downstream port (cold-socket compliant) and three USB-A ports, each with independent current limiting. Type-C attach detection, power-up sequencing and overcurrent handling are implemented entirely in hardware, with no microcontroller required.
 
@@ -34,7 +32,7 @@ The areas I specifically wanted to get right:
 - Routing 5 Gbps SuperSpeed differential pairs with impedance control
 - Understanding the 6-layer stackup advantages
 - Implementing USB-C cold socket behavior correctly, in hardware, per spec
-- Getting power-up sequencing timing right against the TUSB8044A'sdatasheet requirements
+- Getting power-up sequencing timing right against the TUSB8044A's datasheet requirements
 
 ---
 
@@ -131,7 +129,7 @@ The hub negotiates 3A from the upstream USB-C port. Hub control circuitry and al
 
 | Item | Current |
 |---|---|
-| Upstream budget (USB-C UFP, 3A negotiated) | 3000 mA |
+| Upstream budget (USB-C UFP) | 3000 mA |
 | Hub controller + support circuitry | ≈ 582 mA |
 | Available for downstream ports | ≈ 2418 mA |
 | Ports 1–2 limit (TPS2561 #1, R_ILIM = 37.4kΩ) | 1.5 A each |
@@ -224,6 +222,8 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 | **Cold Socket** | DMG2305UX P-MOSFET on USB-C downstream port |
 | **ESD Protection** | PUSB3FR4Z (SS), TPD4E05U06 (USB2.0/CC), SMAJ5.0A (VBUS) |
 | **PCB Layers** | 6-layer, impedance-controlled |
+| **PCB Finish** | ENIG (Electroless Nickel Immersion Gold) |
+| **Copper Weight** | 1 oz outer / 0.5 oz inner |
 | **Board Size** | 100 × 50 mm |
 
 ---
@@ -303,7 +303,7 @@ Read throughput of 102 MB/s is incompatible with USB 2.0 High-Speed (theoretical
 
 > [!NOTE]
 > During continuous operation with multiple downstream devices connected, the TUSB8044A hub controller and the HD3SS3220
-> controller run warm to the touch. Adding a small heatsinks or improving airflow is recommended for prolonged high-load operation.
+> controller run warm to the touch. Adding small heatsinks or improving airflow is recommended for prolonged high-load operation.
 
 ---
 
@@ -372,7 +372,7 @@ boots from TI factory defaults, and the write utility can be re-run.
 
 This project provided practical experience beyond schematic capture and PCB layout, particularly in areas that are rarely covered in university courses:
 
-- Designing a 6-layer controlled-impedance PCB for 5 Gbit/s differential routing.
+- Designing and routing a 6-layer controlled-impedance PCB for 5 Gbit/s differential routing.
 - Translating impedance targets into manufacturable trace geometries using field-solver calculations.
 - Understanding USB Type-C electrical requirements, including cold-socket behavior implemented entirely in hardware.
 - Designing reliable power sequencing while accounting for internal IC behavior (such as GRSTz pull-up tolerance), not only the external RC network.
