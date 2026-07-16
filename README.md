@@ -413,9 +413,15 @@ USB3.2-Hub-4Port/
 │   │   ├── Downstream_Port_1.SchDoc
 │   │   ├── Downstream_Port_2.SchDoc
 │   │   ├── Downstream_Port_3-4.SchDoc
+│   │   ├── Outputs.OutJob
 │   │   ├── USB3.2_Hub_4Port.BomDoc
+│   │   ├── USB3.2_Hub_4Port.PCBDwf
 │   │   ├── USB3.2_Hub_4Port.PrjPcbVariants
 │   │   └── USB3.2_Hub_4Port.PrjPcbStructure
+│   │
+│   ├── Libraries/
+│   │   ├── USB3.2_Hub_4Port.PcbLib
+│   │   └── USB3.2_Hub_4Port.SCHLIB
 │   │
 │   └── Exports/
 │       ├── Schematic_USB_Hub_v1.0.pdf
