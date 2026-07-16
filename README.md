@@ -282,18 +282,13 @@ Serial       : F10100616729  (TI factory UUID)
 
 ### SuperSpeed Performance
 
-Validated using USBDeview on a Kingston DataTraveler 3.0 device.
-
-| Metric | Value |
-|---|---|
-| Sequential read | **102.86 MB/s** |
-| Sequential write | 16.36 MB/s |
-
-Read throughput of 102 MB/s is incompatible with USB 2.0 High-Speed (theoretical max ≈ 40 MB/s), confirming the SuperSpeed (5 Gbit/s) link is established end-to-end.
+Validated using USBDeview's built-in Speed Test utility on a Kingston DataTraveler 3.0 device.
 
 <p align="center">
   <img src="Images/Bringup_SpeedTest_SuperSpeed.png" width="500"/>
 </p>
+
+Read throughput of 102 MB/s is incompatible with USB 2.0 High-Speed (theoretical max ≈ 40 MB/s), confirming the SuperSpeed (5 Gbit/s) link is established end-to-end.
 
 ### Other Tests
 
