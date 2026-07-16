@@ -245,7 +245,7 @@ The project is currently in manufacturing and will be updated.
 ## ✅ Bring-Up Results
 
 Validation was performed on the first prototype assembled by PCBWay.
-Full procedure and raw measurements are documented in [`Docs/Bringup.md`](Docs/Bringup.md).
+Full procedure and raw measurements are documented in [`Docs/Bringup_Procedure.md`](Docs/Bringup_Procedure.md).
 
 ### Power Rails
 
@@ -280,7 +280,7 @@ Serial       : F10100616729  (TI factory UUID)
 <p align="center">
   <img src="Images/Bringup_UsbTreeView_Connected.png" width="750"/>
 </p>
-<p align="center"><em>UsbTreeView — HS hub (Alberto Marrone, webcam on port 4) and SS hub (two Kingston DataTraveler 3.0 on ports 2 and 4).</em></p>
+<p align="center"><em>UsbTreeView — HS hub and SS hub.</em></p>
 
 ### SuperSpeed Performance
 
@@ -290,9 +290,8 @@ Validated using USBDeview on a Kingston DataTraveler 3.0 device.
 |---|---|
 | Sequential read | **102.86 MB/s** |
 | Sequential write | 16.36 MB/s |
-| Connection speed confirmed | SuperSpeed (5 Gbit/s) |
 
-Read throughput of 102 MB/s is incompatible with USB 2.0 High-Speed (theoretical max ≈ 40 MB/s), confirming the SuperSpeed link is established end-to-end.
+Read throughput of 102 MB/s is incompatible with USB 2.0 High-Speed (theoretical max ≈ 40 MB/s), confirming the SuperSpeed (5 Gbit/s) link is established end-to-end.
 
 <p align="center">
   <img src="Images/Bringup_SpeedTest_SuperSpeed.png" width="500"/>
@@ -317,7 +316,7 @@ The TUSB8044A reads a Microchip **24LC08BT-I/OT** EEPROM (8 Kbit, SOT-23) at pow
 custom USB descriptors and port configuration. Programming is performed via the chip's internal
 **HID-to-I2C bridge** (VID `0x0451`, PID `0x82FF`) — no external programmer required.
 
-Two Python utilities are provided in [`Scripts/EEPROM/`](Scripts/EEPROM/):
+Two Python utilities are provided in [`Scripts`](Scripts/):
 
 | Script | Purpose |
 |---|---|
@@ -337,11 +336,11 @@ On Windows, run CMD as **Administrator** (required for raw HID access).
 Edit the `USER CONFIGURATION` block at the top of `TUSB8044A_EEPROM_WRITE.py`:
 
 ```python
-MANUFACTURER = "Alberto Marrone"       # manufacturer string (max 32 chars)
+MANUFACTURER = "Alberto Marrone"          # manufacturer string (max 32 chars)
 PRODUCT      = "USB 3.2 Gen1 4-Port Hub"  # product string (max 32 chars)
-VID_HUB      = 0x0451                  # keep TI VID for prototypes
-PID_HUB      = 0x8440                  # TUSB8044A SS hub PID
-BC12_MASK    = 0x0F                    # BC1.2 CDP enable mask (0x0F = all 4 ports)
+VID_HUB      = 0x0451                     # keep TI VID for prototypes
+PID_HUB      = 0x8440                     # TUSB8044A SS hub PID
+BC12_MASK    = 0x0F                       # BC1.2 CDP enable mask (0x0F = all 4 ports)
 ```
 
 Then run:
@@ -390,6 +389,8 @@ boots from TI factory defaults, and the write utility can be re-run.
 | [BOM](Manufacturing/Assembly/BOM.xlsx) | Bill of materials |
 | [Pick & Place](Manufacturing/Assembly/PickPlace.csv) | Assembly placement file |
 | [PCBWay Stackup Reference (PDF)](Manufacturing/Stackup/PCBWay_6Layer_Stackup.pdf) | Manufacturer stackup |
+| [EEPROM Write Tool](Scripts/TUSB8044A_EEPROM_WRITE.py) | Programs custom USB descriptor strings via HID-to-I2C |
+| [EEPROM Read Tool](Scripts/TUSB8044A_EEPROM_READ.py) | Dumps and annotates full EEPROM contents |
 
 ---
 
@@ -441,7 +442,7 @@ USB3.2-Hub-4Port/
 │
 ├── Docs/
 │   ├── Design_Decisions.md
-│   └── Bringup.md
+│   └── Bringup_Procedure.md
 │
 └── README.md
 ```
