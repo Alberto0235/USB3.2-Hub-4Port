@@ -230,9 +230,11 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 
 ## 🤝 Manufacturing Partner
 
-Manufacturing and assembly for this prototype were carried out by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" align="absmiddle"></a>.
+This prototype was fabricated and assembled by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" align="absmiddle"></a>.
 
-During the engineering review process, the PCBWay team provided valuable DFM feedback and identified a via-in-pad issue before fabrication. The issue was corrected before production, avoiding a potentially costly prototype revision on a 6-layer impedance-controlled run.
+The manufacturing process included a standard engineering review prior to production. During this review, the PCBWay engineering team identified a via-in-pad condition that could affect assembly yield. The issue was corrected before fabrication, avoiding an unnecessary prototype revision.
+
+The finished boards met the specified impedance-controlled stackup and assembly requirements. Visual inspection of the assembled prototype showed good component alignment and solder quality, including the 0.5 mm-pitch VQFN packages used by the TUSB8044A and HD3SS3220 devices, with no observable solder bridges or placement defects.
 
 ---
 
@@ -378,9 +380,9 @@ This project provided practical experience beyond schematic capture and PCB layo
 - Designing a 6-layer controlled-impedance PCB for 5 Gbit/s differential routing.
 - Translating impedance targets into manufacturable trace geometries using field-solver calculations.
 - Understanding USB Type-C electrical requirements, including cold-socket behavior implemented entirely in hardware.
-- Designing reliable power sequencing while accounting for internal IC characteristics, not only external RC networks.
+- Designing reliable power sequencing while accounting for internal IC behavior (such as GRSTz pull-up tolerance), not only the external RC network.
 - Developing EEPROM programming and recovery tools through the TUSB8044A HID-to-I²C interface.
-- Working through a real DFM review with the PCB manufacturer before production.
+- Working through a real manufacturing DFM review with the PCB manufacturer before fabrication.
 - Validating the completed hardware through electrical measurements, USB enumeration, and functional testing.
 
 ---
