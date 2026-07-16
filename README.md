@@ -179,11 +179,7 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 
 ## 🖼️ Design Gallery
 
-### Assembled PCB
-
-<p align="center">
-  <img src="Images/PCB_Assembled_Top.png" width="780"/>
-</p>
+### Final Prototype
 
 <p align="center">
   <img src="Images/PCB_Bare_Top_Bottom.png" width="380"/>
@@ -234,11 +230,9 @@ The RC delay accounts for the TUSB8044A's internal pull-up on GRSTz (R_int ≈ 1
 
 ## 🤝 Manufacturing Partner
 
-Manufacturing and assembly for this prototype are being provided by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" align="absmiddle"></a>.
+Manufacturing and assembly for this prototype were carried out by <a href="https://www.pcbway.com"><img src="Images/PCBWay_Logo.png" height="20" align="absmiddle"></a>.
 
 During the engineering review process, the PCBWay team provided valuable DFM feedback and identified a via-in-pad issue before fabrication. The issue was corrected before production, avoiding a potentially costly prototype revision on a 6-layer impedance-controlled run.
-
-The project is currently in manufacturing and will be updated.
 
 ---
 
@@ -271,11 +265,13 @@ Both logical hub interfaces enumerate correctly on the first attempt:
 | USB 3.x SS hub | 0x8440 | 5 Gbit/s | ✅ |
 | HID-to-I2C bridge | 0x82FF | HS | ✅ |
 
-EEPROM custom strings loaded and verified via [USB descriptor inspection](#-eeprom-configuration):
+EEPROM custom USB descriptors were successfully programmed and verified after enumeration:
 
+```text
 Manufacturer : Alberto Marrone
 Product      : USB 3.2 Gen1 4-Port Hub
 Serial       : F10100616729  (TI factory UUID)
+```
 
 <p align="center">
   <img src="Images/Bringup_UsbTreeView_Connected.png" width="750"/>
@@ -308,6 +304,10 @@ Read throughput of 102 MB/s is incompatible with USB 2.0 High-Speed (theoretical
 - [x] USB-C cold socket — VBUS held at 0 V until cable attach confirmed
 - [x] BC1.2 CDP charging verified
 
+> [!NOTE]
+> During continuous operation with multiple downstream devices connected, the TUSB8044A hub controller and the HD3SS3220
+> controller run warm to the touch. Adding a small heatsinks or improving airflow is recommended for prolonged high-load operation.
+
 ---
 
 ## 🔧 EEPROM Configuration
@@ -338,8 +338,10 @@ Edit the `USER CONFIGURATION` block at the top of `TUSB8044A_EEPROM_WRITE.py`:
 ```python
 MANUFACTURER = "Alberto Marrone"          # manufacturer string (max 32 chars)
 PRODUCT      = "USB 3.2 Gen1 4-Port Hub"  # product string (max 32 chars)
+
 VID_HUB      = 0x0451                     # keep TI VID for prototypes
 PID_HUB      = 0x8440                     # TUSB8044A SS hub PID
+
 BC12_MASK    = 0x0F                       # BC1.2 CDP enable mask (0x0F = all 4 ports)
 ```
 
@@ -371,11 +373,15 @@ boots from TI factory defaults, and the write utility can be re-run.
 
 ## 📚 Lessons Learned
 
-- First 6-layer controlled-impedance design, translating an impedance target into trace width/gap via a field solver
-- USB Type-C cold socket requirements, and implementing them with discrete hardware instead of an MCU
-- GRSTz timing constraints and the importance of accounting for an IC's *internal* pull-up tolerance, not just the external RC values
-- Power budget considerations
-- A real DFM review workflow with a manufacturer
+This project provided practical experience beyond schematic capture and PCB layout, particularly in areas that are rarely covered in university courses:
+
+- Designing a 6-layer controlled-impedance PCB for 5 Gbit/s differential routing.
+- Translating impedance targets into manufacturable trace geometries using field-solver calculations.
+- Understanding USB Type-C electrical requirements, including cold-socket behavior implemented entirely in hardware.
+- Designing reliable power sequencing while accounting for internal IC characteristics, not only external RC networks.
+- Developing EEPROM programming and recovery tools through the TUSB8044A HID-to-I²C interface.
+- Working through a real DFM review with the PCB manufacturer before production.
+- Validating the completed hardware through electrical measurements, USB enumeration, and functional testing.
 
 ---
 
@@ -398,16 +404,6 @@ boots from TI factory defaults, and the write utility can be re-run.
 
 ```text
 USB3.2-Hub-4Port/
-│
-├── Images/
-│   ├── PCB_3D.png
-│   ├── PCB_3D_Top.png
-│   ├── PCB_3D_Bottom.png
-│   ├── Layerstack_Visualizer.png
-│   ├── Stackup.png
-│   ├── D90_Impedance_Profile.png
-│   ├── Schematic_Overview.png
-│   └── PCBWay_Logo.png
 │
 ├── Hardware/
 │   ├── Altium/
@@ -440,9 +436,15 @@ USB3.2-Hub-4Port/
 │       ├── PCBWay_6Layer_Stackup.pdf
 │       └── USB3.2_Hub_4Port_Stackup.png
 │
+├── Scripts/
+│   ├── TUSB8044A_EEPROM_WRITE.py
+│   └── TUSB8044A_EEPROM_READ.py
+│
 ├── Docs/
 │   ├── Design_Decisions.md
 │   └── Bringup_Procedure.md
+│
+├── Images/               # PCB renders, prototype photos and bring-up measurements
 │
 └── README.md
 ```
