@@ -17,6 +17,10 @@ High-Speed Hardware Design
   <img src="Images/PCB_3D.png" width="850">
 </p>
 
+<p align="center">
+<img src="Images/PCB_Assembled_USB_Test.png" width="850">
+</p>
+
 ---
 
 ## 🎯 Project Goal
